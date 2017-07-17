@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -41,12 +42,14 @@ public class SnakeActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+
+
         testView = new myview(this);
 
 
         logic = new SnakeLogic(getApplicationContext());
         logic.initSnake();
-
+        testView.setOnTouchListener(logic.handleTouch);
 
         r = new Runnable() {
             public void run() {
@@ -77,6 +80,8 @@ public class SnakeActivity extends AppCompatActivity {
                 }
             }
         };
+
+
 
         handler.postDelayed(r, 350);
 
@@ -171,6 +176,8 @@ class myview extends View {
         canvas.drawRect(c * WIDTH + 2, r * HEIGHT + 2, c * WIDTH + WIDTH - 1, r * HEIGHT + HEIGHT - 1, paint);
         Log.v("snaketest", "drawing fruit");
     }
+
+
 
 
 }

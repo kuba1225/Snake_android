@@ -41,9 +41,6 @@ public class SnakeLogic extends SurfaceView implements SurfaceHolder.Callback {
     Paint paint = new Paint();
 
 
-
-
-
     private Position fruitPosition = null;
     private Random rand = new Random();
 
@@ -59,7 +56,8 @@ public class SnakeLogic extends SurfaceView implements SurfaceHolder.Callback {
         move = 2;
         snake.length++;
     }
-/////////////////////////////////////////////////////////////////////////////////////////////
+
+    /////////////////////////////////////////////////////////////////////////////////////////////
     public Snake getSnake() {
         return snake;
     }
@@ -99,7 +97,8 @@ public class SnakeLogic extends SurfaceView implements SurfaceHolder.Callback {
     public void setLevel(int level) {
         this.level = level;
     }
-////////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////////////////////////
     public void generateFruit() {
         int r = rand.nextInt(20);
         int c = rand.nextInt(12);
@@ -193,19 +192,19 @@ public class SnakeLogic extends SurfaceView implements SurfaceHolder.Callback {
         int x1 = 0, y1 = 0;
         int x2 = 0, y2 = 0;
         int dx, dy;
-        Log.v("snaketest","on touch event");
+        Log.v("snaketest", "on touch event");
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 x1 = (int) event.getRawX();
                 y1 = (int) event.getRawY();
-                Log.v("snaketest","x1 = "+x1+" y1 = "+y1);
+                Log.v("snaketest", "x1 = " + x1 + " y1 = " + y1);
                 break;
             case MotionEvent.ACTION_MOVE:
                 break;
             case MotionEvent.ACTION_UP:
                 x2 = (int) event.getRawX();
                 y2 = (int) event.getRawX();
-                Log.v("snaketest","x1 = "+x2+" y1 = "+y2);
+                Log.v("snaketest", "x1 = " + x2 + " y1 = " + y2);
                 break;
         }
 
@@ -214,23 +213,85 @@ public class SnakeLogic extends SurfaceView implements SurfaceHolder.Callback {
 
         if (dx > 0 && abs(dx) > abs(dy)) {
             move = 1; //RIGHT
-            Log.v("snaketest","move right");
-        } else if (dx < 0 && abs(dx) > abs(dy) ) {
+            Log.v("snaketest", "move right");
+        } else if (dx < 0 && abs(dx) > abs(dy)) {
             move = 3; //LEFT
-            Log.v("snaketest","move left");
+            Log.v("snaketest", "move left");
         } else if (dy > 0 && abs(dy) > abs(dx)) {
             move = 0; //UP
-            Log.v("snaketest","move up");
+            Log.v("snaketest", "move up");
         } else if (dy < 0 && abs(dy) > abs(dx)) {
             move = 2; //DOWN
-            Log.v("snaketest","move down");
+            Log.v("snaketest", "move down");
         }
 
 
         return true;
     }
+    static int x1 = 0, y1 = 0;
+    static int x2 = 0, y2 = 0;
+    static int x3 = 0, y3 = 0;
+    public View.OnTouchListener handleTouch = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+
+            int dx, dy;
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    x1 = (int) event.getRawX();
+                    y1 = (int) event.getRawY();
+                    Log.v("snakeposition", "x1 = " + x1 + " y1 = " + y1);
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    x3 = (int) event.getRawX();
+                    y3 = (int) event.getRawY();
+                    Log.v("snakeposition", "x3 = " + x3 + " y3 = " + y3);
+
+                    dx = x3 - x1;
+                    dy = y3 - y1;
+                    Log.v("snakeposition", "dx = " + dx + " dy = " + dy);
+                    if (abs(dx) > abs(dy) && x3 > x1) {
+                        move = 1; //RIGHT
+                        Log.v("snakeposition", "move right");
+                    } else if (abs(dx) > abs(dy) && x3 < x1) {
+                        move = 3; //LEFT
+                        Log.v("snakeposition", "move left");
+                    } else if (abs(dy) > abs(dx) && y3 < y1) {
+                        move = 0; //UP
+                        Log.v("snakeposition", "move up");
+                    } else if (abs(dy) > abs(dx) && y3 > y1) {
+                        move = 2; //DOWN
+                        Log.v("snakeposition", "move down");
+                    }
+                    break;
+                case MotionEvent.ACTION_UP:
+                    x2 = (int) event.getRawX();
+                    y2 = (int) event.getRawY();
+                    Log.v("snakeposition", "x2 = " + x2 + " y2 = " + y2);
+
+                    /*dx = x2 - x1;
+                    dy = y2 - y1;
+                    Log.v("snakeposition", "dx = " + dx + " dy = " + dy);
+                    if (abs(dx) > abs(dy) && x2 > x1) {
+                        move = 1; //RIGHT
+                        Log.v("snakeposition", "move right");
+                    } else if (abs(dx) > abs(dy) && x2 < x1) {
+                        move = 3; //LEFT
+                        Log.v("snakeposition", "move left");
+                    } else if (abs(dy) > abs(dx) && y2 < y1) {
+                        move = 0; //UP
+                        Log.v("snakeposition", "move up");
+                    } else if (abs(dy) > abs(dx) && y2 > y1) {
+                        move = 2; //DOWN
+                        Log.v("snakeposition", "move down");
+                    }*/
+                    break;
+            }
 
 
+            return true;
+        }
+    };
 
 
 }
