@@ -10,7 +10,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 import com.example.kuba.snake.R;
-import com.example.kuba.snake.snakeLogic.SnakeLogic;
+
 
 public class MenuActivity extends AppCompatActivity {
     Button startButton;
@@ -22,8 +22,6 @@ public class MenuActivity extends AppCompatActivity {
     static int snakeColorMP = Color.BLACK;
     static int levelMP = 1;
     static int timerDelay = 350;
-    private GraphicsTools tools;
-    private int linesColor = Color.WHITE;
 
 
     @Override
@@ -42,8 +40,6 @@ public class MenuActivity extends AppCompatActivity {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //SnakeLogic logic = new SnakeLogic(getApplicationContext());!!!!!!!!!
-
                 switch (levelMP) {
                     case 1:
                         timerDelay = 350;
@@ -56,11 +52,10 @@ public class MenuActivity extends AppCompatActivity {
                         break;
                 }
 
-                //timer.setDelay(timerDelay);!!!!!!!!!!!!!!!!
-                //logic.setLevel(levelMP);!!!!!!!!!!!!!!!!
-                //paint.setSnakeColor(snakeColorMP);!!!!!!!!!!!!!!!!
-
-                Intent intent = new Intent(getApplicationContext(),SnakeActivity.class);
+                Intent intent = new Intent(getApplicationContext(), SnakeActivity.class);
+                intent.putExtra("TIMERDELAY", timerDelay);
+                intent.putExtra("SNAKECOLOR", snakeColorMP);
+                intent.putExtra("LEVEL", levelMP);
                 startActivity(intent);
             }
         });
@@ -68,7 +63,7 @@ public class MenuActivity extends AppCompatActivity {
         highScoresButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),HighScoresActivity.class);
+                Intent intent = new Intent(getApplicationContext(), HighScoresActivity.class);
                 startActivity(intent);
             }
         });
@@ -76,7 +71,7 @@ public class MenuActivity extends AppCompatActivity {
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),SettingsActivity.class);
+                Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
                 startActivity(intent);
             }
         });

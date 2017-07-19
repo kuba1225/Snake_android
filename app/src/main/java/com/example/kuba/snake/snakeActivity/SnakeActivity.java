@@ -9,31 +9,27 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.TextView;
 
 import com.example.kuba.snake.R;
 import com.example.kuba.snake.snakeLogic.SnakeLogic;
 
-import static com.example.kuba.snake.snakeActivity.SnakeActivity.START_STOP;
 import static com.example.kuba.snake.snakeActivity.SnakeActivity.logic;
+import static com.example.kuba.snake.snakeActivity.SnakeActivity.snakeColor;
 
 public class SnakeActivity extends AppCompatActivity {
 
-    static int START_STOP = 1;//1 = start, 0 = stop
-    Handler handler = new Handler();
-    Paint paint = new Paint();
+    static Handler handler = new Handler();
     Runnable r;
+    int timerDelay = 350;
     static SnakeLogic logic;
     static int licznik = 0;
     View testView;
+    static int snakeColor = Color.BLACK;
+    static int level = 1;
 
-    public static void setStartStop(int startStop) {
-        START_STOP = startStop;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +39,6 @@ public class SnakeActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 
-
         testView = new myview(this);
 
 
@@ -51,39 +46,45 @@ public class SnakeActivity extends AppCompatActivity {
         logic.initSnake();
         testView.setOnTouchListener(logic.handleTouch);
 
+
+        Bundle bundle = new Bundle();
+
+        bundle = getIntent().getExtras();
+
+        timerDelay = bundle.getInt("TIMERDELAY");
+        snakeColor = bundle.getInt("SNAKECOLOR");
+        level = bundle.getInt("LEVEL");
+
+        logic.setLevel(level);
+
+
         r = new Runnable() {
             public void run() {
-                if (START_STOP == 1&&!logic.isGameOver()) {
+                if (!logic.isGameOver()) {
                     logic.updatePosition();
-                    handler.postDelayed(this, 350);
+                    handler.postDelayed(this, timerDelay);
                     setContentView(testView);
 
                     testView.invalidate();
 
-                }else{
-                    /*GameOverActivity gameOverActivity = new GameOverActivity();
+                } else {
+
+                    Thread.currentThread().interrupt();
                     finish();
-                    gameOverActivity.setPoint(logic.getPoints());
+                    Intent intent = new Intent(getApplicationContext(), GameOverActivity.class);
 
-
-                    gameOverActivity.points.setText(logic.getPoints() + " PKT");
-
+                    intent.putExtra("punkty", logic.getPoints());
                     logic.getSnake().length = 0;
                     logic.getSnake().getPosition().clear();
-                    logic.initSnake();
+
                     logic.setGameOver(false);
-                    START_STOP = 0;
-                    Intent intent = new Intent(getApplicationContext(), GameOverActivity.class);
-                    //intent.putExtra("",logic.getPoints());!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-                    startActivity(intent);*/
-                    Thread.currentThread().interrupt();
+                    startActivity(intent);
                 }
             }
         };
 
 
-
-        handler.postDelayed(r, 350);
+        handler.postDelayed(r, timerDelay);
 
     }
 
@@ -94,27 +95,17 @@ class myview extends View {
     private GraphicsTools tools = new GraphicsTools();
     private static int WIDTH = 0;
     private static int HEIGHT = 0;
-    private int snakeColor = Color.BLACK;
+
     private int backgroundColor = Color.WHITE;
     private int fruitColor = Color.RED;
     private int linesColor = Color.BLACK;
     Context context;
     Paint paint = new Paint();
-    //SnakeLogic logic;
 
 
     public myview(Context context) {
         super(context);
         this.context = context;
-        //logic = new SnakeLogic(context);
-    }
-
-    public int getSnakeColor() {
-        return snakeColor;
-    }
-
-    public void setSnakeColor(int snakeColor) {
-        this.snakeColor = snakeColor;
     }
 
     @Override
@@ -128,7 +119,7 @@ class myview extends View {
 
 
         tools.drawLines(canvas, linesColor, paint);
-        Log.v("snaketest", "draw lines");
+        //Log.v("snaketest", "draw lines");
         drawSnake(canvas);
 
         /*paint.setColor(fruitColor);
@@ -161,7 +152,7 @@ class myview extends View {
         paint.setStyle(Paint.Style.FILL);
 
         for (int i = 0; i < logic.getSnake().length; i++) {
-            Log.v("snaketest", "drawing snake");
+            //Log.v("snaketest", "drawing snake");
             r = logic.getSnake().getPosition().get(i).getR();
             c = logic.getSnake().getPosition().get(i).getC();
             canvas.drawRect(c * WIDTH + 2, r * HEIGHT + 2, c * WIDTH + WIDTH - 1, r * HEIGHT + HEIGHT - 1, paint);
@@ -174,10 +165,8 @@ class myview extends View {
         paint.setColor(fruitColor);
         paint.setStyle(Paint.Style.FILL);
         canvas.drawRect(c * WIDTH + 2, r * HEIGHT + 2, c * WIDTH + WIDTH - 1, r * HEIGHT + HEIGHT - 1, paint);
-        Log.v("snaketest", "drawing fruit");
+        //Log.v("snaketest", "drawing fruit");
     }
-
-
 
 
 }

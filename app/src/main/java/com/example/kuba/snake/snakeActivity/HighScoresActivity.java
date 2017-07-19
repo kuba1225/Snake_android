@@ -1,7 +1,7 @@
 package com.example.kuba.snake.snakeActivity;
 
-import android.content.res.AssetManager;
 import android.graphics.Color;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -17,11 +17,11 @@ import com.example.kuba.snake.snakeLogic.PointsComparator;
 import com.example.kuba.snake.snakeLogic.User;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,6 +35,8 @@ public class HighScoresActivity extends AppCompatActivity {
     private List<User> userScores;
     private GraphicsTools tools;
     private int linesColor = Color.WHITE;
+    public String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/SnakeFiles";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,18 +46,22 @@ public class HighScoresActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_high_scores);
 
-
-        tools = new GraphicsTools();
-        userScores = new ArrayList<User>();
-        try {
-            readFromFile("HighScores.txt");
-        } catch (IOException ex) {
-            System.out.println(ex + "Nieudana próba odczytu pliku.");
-        }
-
         menu = (Button) findViewById(R.id.HighScoresMenuButton);
         clearList = (Button) findViewById(R.id.HighScoresClearListButton);
         highScoresList = (TextView) findViewById(R.id.HighScoresList);
+
+        tools = new GraphicsTools();
+        userScores = new ArrayList<User>();
+
+
+        final File file = new File(path + "/HighScores.txt");
+
+        //Log.v("czytaniezplikusnake", "uruchamiam metodę readFromFile");
+        try {
+            readFromFile(file);
+        } catch (IOException ex) {
+            System.out.println(ex + "Nieudana próba odczytu pliku.");
+        }
 
 
         highScoresList.setMovementMethod(new ScrollingMovementMethod());
@@ -71,64 +77,82 @@ public class HighScoresActivity extends AppCompatActivity {
         clearList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                PrintWriter file = null;
                 try {
-                    file = new PrintWriter("HighScores.txt");
-                    file.print("");
-                } catch (FileNotFoundException ex) {
-                    System.out.println(ex + "Nieudana próba odczytu pliku.");
-                } finally {
-                    if (file != null) {
-                        file.close();
-                    }
+                    clearList(file);
+                } catch (IOException e) {
+                    System.out.println(e + "Nieudana próba odczytu pliku.");
                 }
+                //Log.v("czytaniezplikusnake", "wyczyszczono zawartosc pliku");
+                highScoresList.setText("");
             }
         });
+
+
+    }
+
+    public void clearList(File file) throws IOException {
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(file, false);
+            //Log.v("czytaniezplikusnake", "otworzylem plik");
+            fos.write(("").getBytes());
+            //Log.v("czytaniezplikusnake", "wpisalem pusty tekst");
+
+        } finally {
+            if (fos != null) {
+                fos.close();
+            }
+        }
+
     }
 
 
-    public void readFromFile(String fileName) throws IOException {
+    public void readFromFile(File file) throws IOException {
         int licznik = 1;
-        Scanner file = null;
+
         String line;
         String name;
         int points;
-        AssetManager assetManager = this.getResources().getAssets();
-        InputStream input = assetManager.open(fileName);
+        FileInputStream fis = null;
+        Scanner scannerFile = null;
+
 
         try {
-            file = new Scanner(new BufferedReader(new InputStreamReader(input, "UTF-8")));
+            //Log.v("czytaniezplikusnake", "tworze fileinputstream");
+            fis = new FileInputStream(file);
 
-            while (file.hasNext()) {
-                name = file.next();
-                while (!file.hasNextInt()) {
-                    name += (" " + file.next());
+            InputStreamReader isr = new InputStreamReader(fis);
+
+
+            scannerFile = new Scanner(new BufferedReader(isr));
+
+            while (scannerFile.hasNext()) {
+                //Log.v("czytaniezplikusnake", "czytam");
+                name = scannerFile.next();
+                while (!scannerFile.hasNextInt()) {
+                    name += (" " + scannerFile.next());
                 }
-                points = file.nextInt();
+                points = scannerFile.nextInt();
                 userScores.add(new User(name, points));
-                Log.v("tag",name);
                 licznik++;
             }
 
             Collections.sort(userScores, new PointsComparator());
+            //Log.v("czytaniezplikusnake", "posortowalem");
 
             for (int i = 0; i < licznik - 1; i++) {
                 line = (i + 1) + ".  " + userScores.get(i).getUserName() + "     " + userScores.get(i).getPoints() + " PKT";
-                highScoresList.append(line);
+                highScoresList.append(line + "\n");
+                //Log.v("czytaniezplikusnake", "dodaje do textview");
+
             }
         } finally {
-            if (file != null) {
-                file.close();
+            if (fis != null && scannerFile != null) {
+                fis.close();
             }
         }
     }
 
 
-
-
-
-
-
-    }
+}
 

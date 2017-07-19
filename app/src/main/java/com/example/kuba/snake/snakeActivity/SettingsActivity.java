@@ -9,6 +9,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 import com.example.kuba.snake.R;
+
 import static com.example.kuba.snake.snakeActivity.MenuActivity.*;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -25,9 +26,6 @@ public class SettingsActivity extends AppCompatActivity {
     Button menuButton;
 
     private int level = 1;
-    private int timerDelay = 350;
-    private GraphicsTools tools;
-    private int linesColor = Color.WHITE;
     private int snakeColor = Color.BLACK;
 
     @Override
@@ -37,8 +35,6 @@ public class SettingsActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_settings);
-
-
 
         button1Level = (Button) findViewById(R.id.SettingsLevel1Button);
         button2Level = (Button) findViewById(R.id.SettingsLevel2Button);
@@ -73,6 +69,9 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 level = 1;
+                button1Level.setTextColor(Color.BLACK);
+                button2Level.setTextColor(Color.WHITE);
+                button3Level.setTextColor(Color.WHITE);
             }
         });
 
@@ -80,6 +79,9 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 level = 2;
+                button1Level.setTextColor(Color.WHITE);
+                button2Level.setTextColor(Color.BLACK);
+                button3Level.setTextColor(Color.WHITE);
             }
         });
 
@@ -87,6 +89,9 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 level = 3;
+                button1Level.setTextColor(Color.WHITE);
+                button2Level.setTextColor(Color.WHITE);
+                button3Level.setTextColor(Color.BLACK);
             }
         });
 
